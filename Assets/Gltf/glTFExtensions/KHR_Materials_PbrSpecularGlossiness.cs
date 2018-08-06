@@ -11,9 +11,4 @@ namespace Gltf.Schema.Extensions
         public float glossinessFactor;
         public GltfTextureInfo specularGlossinessTexture;
     }
-
-    public class GltfExtension
-    {
-        public string ElementName;
-    }
 }
