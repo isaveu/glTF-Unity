@@ -5,7 +5,7 @@ using Gltf.Schema.Extensions;
 namespace Gltf.Schema
 {
     [Serializable]
-    public class GltfRoot : GltfProperty
+    public class GltfObject : GltfProperty
     {
         /// <summary>
         /// Names of glTF extensions used somewhere in this asset.
