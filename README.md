@@ -1,2 +1,2 @@
 # glTF-Unity
-Unity Base glTF serialization alternative.
+Unity Base glTF 2.0 serialization alternative.
