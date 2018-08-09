@@ -1,4 +1,5 @@
 ﻿using System;
+using UnityEngine;
 
 namespace Gltf.Schema
 {
@@ -9,6 +10,8 @@ namespace Gltf.Schema
     [Serializable]
     public class GltfImage : GltfChildOfRootProperty
     {
+        #region Serialized Fields
+
         /// <summary>
         /// The uri of the image.  Relative paths are relative to the .gltf file.
         /// Instead of referencing an external file, the uri can also be a data-uri.
@@ -26,6 +29,10 @@ namespace Gltf.Schema
         /// The index of the bufferView that contains the image.
         /// Use this instead of the image's uri property.
         /// </summary>
-        public uint bufferView;
+        public int bufferView;
+
+        #endregion Serialized Fields
+
+        public Texture2D Texture { get; set; }
     }
 }

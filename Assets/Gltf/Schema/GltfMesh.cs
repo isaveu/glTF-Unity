@@ -15,12 +15,12 @@ namespace Gltf.Schema
         /// a material.
         /// <minItems>1</minItems>
         /// </summary>
-        public List<GltfMeshPrimitive> primitives;
+        public GltfMeshPrimitive[] primitives;
 
         /// <summary>
         /// Array of weights to be applied to the Morph Targets.
         /// <minItems>0</minItems>
         /// </summary>
-        public List<double> weights;
+        public double[] weights;
     }
 }

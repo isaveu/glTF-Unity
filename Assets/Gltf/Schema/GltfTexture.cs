@@ -11,11 +11,11 @@ namespace Gltf.Schema
         /// <summary>
         /// The index of the sampler used by this texture.
         /// </summary>
-        public uint sampler;
+        public int sampler;
 
         /// <summary>
         /// The index of the image used by this texture.
         /// </summary>
-        public uint source;
+        public int source;
     }
 }

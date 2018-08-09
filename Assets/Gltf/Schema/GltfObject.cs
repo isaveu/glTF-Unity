@@ -1,31 +1,34 @@
-﻿using System;
+﻿using Gltf.Schema.Extensions;
+using System;
 using System.Collections.Generic;
-using Gltf.Schema.Extensions;
+using UnityEngine;
 
 namespace Gltf.Schema
 {
     [Serializable]
     public class GltfObject : GltfProperty
     {
+        #region Serialized Fields
+
         /// <summary>
         /// Names of glTF extensions used somewhere in this asset.
         /// </summary>
-        public List<string> extensionsUsed;
+        public string[] extensionsUsed;
 
         /// <summary>
         /// Names of glTF extensions required to properly load this asset.
         /// </summary>
-        public List<string> extensionsRequired;
+        public string[] extensionsRequired;
 
         /// <summary>
         /// An array of accessors. An accessor is a typed view into a bufferView.
         /// </summary>
-        public List<GltfAccessor> accessors;
+        public GltfAccessor[] accessors;
 
         /// <summary>
         /// An array of keyframe animations.
         /// </summary>
-        public List<GltfAnimation> animations;
+        public GltfAnimation[] animations;
 
         /// <summary>
         /// Metadata about the glTF asset.
@@ -35,43 +38,43 @@ namespace Gltf.Schema
         /// <summary>
         /// An array of buffers. A buffer points to binary geometry, animation, or skins.
         /// </summary>
-        public List<GltfBuffer> buffers;
+        public GltfBuffer[] buffers;
 
         /// <summary>
         /// An array of bufferViews.
         /// A bufferView is a view into a buffer generally representing a subset of the buffer.
         /// </summary>
-        public List<GltfBufferView> bufferViews;
+        public GltfBufferView[] bufferViews;
 
         /// <summary>
         /// An array of cameras. A camera defines a projection matrix.
         /// </summary>
-        public List<GltfCamera> cameras;
+        public GltfCamera[] cameras;
 
         /// <summary>
         /// An array of images. An image defines data used to create a texture.
         /// </summary>
-        public List<GltfImage> images;
+        public GltfImage[] images;
 
         /// <summary>
         /// An array of materials. A material defines the appearance of a primitive.
         /// </summary>
-        public List<GltfMaterial> materials;
+        public GltfMaterial[] materials;
 
         /// <summary>
         /// An array of meshes. A mesh is a set of primitives to be rendered.
         /// </summary>
-        public List<GltfMesh> meshes;
+        public GltfMesh[] meshes;
 
         /// <summary>
         /// An array of nodes.
         /// </summary>
-        public List<GltfNode> nodes;
+        public GltfNode[] nodes;
 
         /// <summary>
         /// An array of samplers. A sampler contains properties for texture filtering and wrapping modes.
         /// </summary>
-        public List<GltfSampler> samplers;
+        public GltfSampler[] samplers;
 
         /// <summary>
         /// The index of the default scene.
@@ -81,19 +84,35 @@ namespace Gltf.Schema
         /// <summary>
         /// An array of scenes.
         /// </summary>
-        public List<GltfScene> scenes;
+        public GltfScene[] scenes;
 
         /// <summary>
         /// An array of skins. A skin is defined by joints and matrices.
         /// </summary>
-        public List<GltfSkin> skins;
+        public GltfSkin[] skins;
 
         /// <summary>
         /// An array of textures.
         /// </summary>
-        public List<GltfTexture> textures;
+        public GltfTexture[] textures;
 
-        [NonSerialized]
-        public List<GltfExtension> RegisteredExtensions = new List<GltfExtension>();
+        #endregion Serialized Fields
+
+        /// <summary>
+        /// The name of the gltf Object.
+        /// </summary>
+        public string Name { get; set; }
+
+        /// <summary>
+        /// The absolute path to the glTF Object on disk.
+        /// </summary>
+        public string Uri { get; set; }
+
+        /// <summary>
+        /// The <see cref="GameObject"/> reference for the gltf Object.
+        /// </summary>
+        public GameObject GameObjectReference { get; set; }
+
+        public List<GltfExtension> RegisteredExtensions { get; set; } = new List<GltfExtension>();
     }
 }

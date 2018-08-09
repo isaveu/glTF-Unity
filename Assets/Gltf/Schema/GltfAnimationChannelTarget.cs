@@ -8,7 +8,7 @@ namespace Gltf.Schema
         /// <summary>
         /// The index of the node to target.
         /// </summary>
-        public uint node;
+        public int node;
 
         /// <summary>
         /// The name of the node's TRS property to modify.

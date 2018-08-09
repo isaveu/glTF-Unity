@@ -3,6 +3,7 @@ using Gltf.Schema.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Text.RegularExpressions;
 using UnityEngine;
 using Debug = UnityEngine.Debug;
@@ -12,11 +13,29 @@ namespace Gltf.Serialization
     public static class GltfSerializationUtility
     {
         /// <summary>
+        /// Gets a glTF object from the provided uri
+        /// </summary>
+        /// <param name="uri">the path to the file to load</param>
+        /// <returns><see cref="GltfObject"/></returns>
+        public static GltfObject GetGltfObjectFromPath(string uri)
+        {
+            // TODO Check if glb vs gltf
+            string gltfJson = File.ReadAllText(uri);
+            var gltfObject = GetGltfObjectFromJson(gltfJson);
+            gltfObject.Uri = uri;
+            int nameStart = uri.LastIndexOf("\\", StringComparison.Ordinal) + 1;
+            int nameLength = uri.Length - nameStart;
+            gltfObject.Name = uri.Substring(nameStart, nameLength).Replace(".gltf", "");
+            ImportGltf.ImportGltfObject(gltfObject);
+            return gltfObject;
+        }
+
+        /// <summary>
         /// Gets a glTF object from the provided json string.
         /// </summary>
         /// <param name="jsonString">String defining a glTF Object.</param>
         /// <returns><see cref="GltfObject"/></returns>
-        public static GltfObject GetGltfObject(string jsonString)
+        public static GltfObject GetGltfObjectFromJson(string jsonString)
         {
             var watch = new Stopwatch();
             watch.Start();
@@ -27,7 +46,7 @@ namespace Gltf.Serialization
             watch.Reset();
             watch.Start();
 
-            for (int i = 0; i < gltfObject.extensionsRequired.Count; i++)
+            for (int i = 0; i < gltfObject.extensionsRequired?.Length; i++)
             {
                 var extensionsRequired = GetGltfExtensionObjects(jsonString, gltfObject.extensionsRequired[i]);
 
@@ -35,7 +54,7 @@ namespace Gltf.Serialization
                 {
                     if (gltfObject.extensionsUsed[i].Equals("KHR_materials_pbrSpecularGlossiness"))
                     {
-                        for (int j = 0; j < gltfObject.materials.Count; j++)
+                        for (int j = 0; j < gltfObject.materials.Length; j++)
                         {
                             if (gltfObject.materials[i].name == extensionRequired.Key)
                             {
@@ -49,7 +68,7 @@ namespace Gltf.Serialization
                 }
             }
 
-            for (int i = 0; i < gltfObject.extensionsUsed.Count; i++)
+            for (int i = 0; i < gltfObject.extensionsUsed?.Length; i++)
             {
                 var extensionsUsed = GetGltfExtensionObjects(jsonString, gltfObject.extensionsUsed[i]);
 
@@ -57,7 +76,7 @@ namespace Gltf.Serialization
                 {
                     if (gltfObject.extensionsUsed[i].Equals("KHR_materials_pbrSpecularGlossiness"))
                     {
-                        for (int j = 0; j < gltfObject.materials.Count; j++)
+                        for (int j = 0; j < gltfObject.materials.Length; j++)
                         {
                             if (gltfObject.materials[i].name == extensionUsed.Key)
                             {
@@ -73,6 +92,28 @@ namespace Gltf.Serialization
 
             watch.Stop();
             Debug.Log($"Extensions deserialized in : {watch.ElapsedMilliseconds}");
+
+            watch.Reset();
+            watch.Start();
+
+            var meshPrimitiveAttributes = GetGltfMeshPrimitiveAttribute(jsonString);
+
+            foreach (var meshPrimitiveAttribute in meshPrimitiveAttributes)
+            {
+                for (int i = 0; i < gltfObject.meshes.Length; i++)
+                {
+                    if (gltfObject.meshes[i].name == meshPrimitiveAttribute.Key)
+                    {
+                        for (int j = 0; j < gltfObject.meshes[i].primitives.Length; j++)
+                        {
+                            gltfObject.meshes[i].primitives[j].Attributes = JsonUtility.FromJson<GltfMeshPrimitiveAttributes>(meshPrimitiveAttribute.Value);
+                        }
+                    }
+                }
+            }
+
+            watch.Stop();
+            Debug.Log($"Mesh Primitives deserialized in : {watch.ElapsedMilliseconds}");
 
             return gltfObject;
         }
@@ -90,6 +131,31 @@ namespace Gltf.Serialization
             return match.Success ? GetJsonObject(jsonString, match.Index + match.Length) : null;
         }
 
+        public static Dictionary<string, string> GetGltfMeshPrimitiveAttribute(string jsonString)
+        {
+            var regex = new Regex("(?:\"primitives\"[^\\]][^\\}]+(?<Attributes>\"attributes\"[^}]+}))[^\\]]+[^}]+(?<Name>\"\\w*\")");
+            return GetGltfMeshPrimitiveAttributes(jsonString, regex);
+        }
+
+        private static Dictionary<string, string> GetGltfMeshPrimitiveAttributes(string jsonString, Regex regex)
+        {
+            var jsonObjects = new Dictionary<string, string>();
+
+            if (!regex.IsMatch(jsonString))
+            {
+                return jsonObjects;
+            }
+
+            var matches = regex.Matches(jsonString);
+
+            for (var i = 0; i < matches.Count; i++)
+            {
+                jsonObjects.Add(matches[i].Groups["Name"].Captures[0].Value.Replace("\"", ""), matches[i].Groups["Attributes"].Captures[0].Value.Replace("\"attributes\": ", ""));
+            }
+
+            return jsonObjects;
+        }
+
         /// <summary>
         /// Get a collection of glTF Extensions using the handle provided.
         /// </summary>
@@ -99,7 +165,7 @@ namespace Gltf.Serialization
         public static Dictionary<string, string> GetGltfExtensionObjects(string jsonString, string handle)
         {
             var regex = new Regex($"(\"name\":\\s*\"\\w*\",\\s*\"extensions\":\\s*{{\\s*?)(\"{handle}\"\\s*:\\s*{{)");
-            return GetGltfObjects(jsonString, handle, regex);
+            return GetGltfExtensions(jsonString, regex);
         }
 
         /// <summary>
@@ -111,17 +177,18 @@ namespace Gltf.Serialization
         public static Dictionary<string, string> GetGltfExtraObjects(string jsonString, string handle)
         {
             var regex = new Regex($"(\"name\":\\s*\"\\w*\",\\s*\"extras\":\\s*{{\\s*?)(\"{handle}\"\\s*:\\s*{{)");
-            return GetGltfObjects(jsonString, handle, regex);
+            return GetGltfExtensions(jsonString, regex);
         }
 
-        private static Dictionary<string, string> GetGltfObjects(string jsonString, string handle, Regex regex)
+        private static Dictionary<string, string> GetGltfExtensions(string jsonString, Regex regex)
         {
+            var jsonObjects = new Dictionary<string, string>();
+
             if (!regex.IsMatch(jsonString))
             {
-                return null;
+                return jsonObjects;
             }
 
-            var jsonObjects = new Dictionary<string, string>();
             var matches = regex.Matches(jsonString);
             var nodeName = string.Empty;
 

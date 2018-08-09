@@ -8,7 +8,7 @@ namespace Gltf.Schema
         /// <summary>
         /// The index of the texture.
         /// </summary>
-        public uint index;
+        public int index;
 
         /// <summary>
         /// This integer value is used to construct a string in the format

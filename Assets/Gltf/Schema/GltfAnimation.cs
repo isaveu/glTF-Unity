@@ -14,12 +14,12 @@ namespace Gltf.Schema
         /// node's property. Different channels of the same animation can't have equal
         /// targets.
         /// </summary>
-        public List<GltfAnimationChannel> channels;
+        public GltfAnimationChannel[] channels;
 
         /// <summary>
         /// An array of samplers that combines input and output accessors with an
         /// interpolation algorithm to define a keyframe graph (but not its target).
         /// </summary>
-        public List<GltfAnimationSampler> samplers;
+        public GltfAnimationSampler[] samplers;
     }
 }

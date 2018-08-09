@@ -11,7 +11,7 @@ namespace Gltf.Schema
         /// seconds with `time[0] >= 0.0`, and strictly increasing values,
         /// i.e., `time[n + 1] > time[n]`
         /// </summary>
-        public uint input;
+        public int input;
 
         /// <summary>
         /// Interpolation algorithm. When an animation targets a node's rotation,
@@ -27,6 +27,6 @@ namespace Gltf.Schema
         /// accessors must have the same `count`. When sampler is used with TRS target,
         /// output accessors componentType must be `FLOAT`.
         /// </summary>
-        public uint output;
+        public int output;
     }
 }

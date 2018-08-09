@@ -19,6 +19,8 @@ namespace Gltf.Schema
         /// The length of the buffer in bytes.
         /// <minimum>0</minimum>
         /// </summary>
-        public uint byteLength;
+        public int byteLength;
+
+        public byte[] BufferData { get; set; }
     }
 }

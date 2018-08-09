@@ -9,11 +9,7 @@ namespace Gltf.Schema
     [Serializable]
     public class GltfMeshPrimitive : GltfProperty
     {
-        /// <summary>
-        /// A dictionary object, where each key corresponds to mesh attribute semantic
-        /// and each value is the index of the accessor containing attribute's data.
-        /// </summary>
-        public Dictionary<string, uint> attributes; // TODO figure out a way to deserialize this structure.
+        #region Serialized Fields
 
         /// <summary>
         /// The index of the accessor that contains mesh indices.
@@ -26,17 +22,19 @@ namespace Gltf.Schema
         /// or 5125 (UNSIGNED_INT), the latter is only allowed
         /// when `OES_element_index_uint` extension is used; `type` must be `\"SCALAR\"`.
         /// </summary>
-        public uint indices;
+        public int indices;
 
         /// <summary>
         /// The index of the material to apply to this primitive when rendering.
         /// </summary>
-        public uint material;
+        public int material;
 
         /// <summary>
         /// The type of primitives to render. All valid values correspond to WebGL enums.
         /// </summary>
         public GltfDrawMode mode;
+
+        #endregion Serialized Fields
 
         /// <summary>
         /// An array of Morph Targets, each  Morph Target is a dictionary mapping
@@ -44,6 +42,12 @@ namespace Gltf.Schema
         /// in the Morph Target (index of the accessor containing the attribute
         /// displacements' data).
         /// </summary>
-        public List<object> targets; // TODO figure out a way to deserialize this structure.
+        public List<Dictionary<string, int>> Targets;
+
+        /// <summary>
+        /// A dictionary object, where each key corresponds to mesh attribute semantic
+        /// and each value is the index of the accessor containing attribute's data.
+        /// </summary>
+        public GltfMeshPrimitiveAttributes Attributes;
     }
 }

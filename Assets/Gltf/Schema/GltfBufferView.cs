@@ -11,19 +11,19 @@ namespace Gltf.Schema
         /// <summary>
         /// The index of the buffer.
         /// </summary>
-        public uint buffer;
+        public int buffer;
 
         /// <summary>
         /// The offset into the buffer in bytes.
         /// <minimum>0</minimum>
         /// </summary>
-        public uint byteOffset;
+        public int byteOffset;
 
         /// <summary>
         /// The length of the bufferView in bytes.
         /// <minimum>0</minimum>
         /// </summary>
-        public uint byteLength;
+        public int byteLength;
 
         /// <summary>
         /// The stride, in bytes, between vertex attributes or other interleavable data.

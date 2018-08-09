@@ -67,7 +67,7 @@ namespace Gltf.Schema
         /// <minItems>1</minItems>
         /// <maxItems>16</maxItems>
         /// </summary>
-        public List<double> max;
+        public double[] max;
 
         /// <summary>
         /// Minimum value of each component in this attribute.
@@ -85,7 +85,7 @@ namespace Gltf.Schema
         /// <minItems>1</minItems>
         /// <maxItems>16</maxItems>
         /// </summary>
-        public List<double> min;
+        public double[] min;
 
         /// <summary>
         /// Sparse storage of attributes that deviate from their initialization value.

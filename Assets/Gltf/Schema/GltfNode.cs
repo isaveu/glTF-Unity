@@ -27,17 +27,17 @@ namespace Gltf.Schema
         /// <summary>
         /// The index of the camera referenced by this node.
         /// </summary>
-        public uint camera;
+        public int camera;
 
         /// <summary>
         /// The indices of this node's children.
         /// </summary>
-        public List<uint> children;
+        public int[] children;
 
         /// <summary>
         /// The index of the skin referenced by this node.
         /// </summary>
-        public uint skin;
+        public int skin;
 
         /// <summary>
         /// A floating-point 4x4 transformation matrix stored in column-major order.
@@ -47,7 +47,7 @@ namespace Gltf.Schema
         /// <summary>
         /// The index of the mesh in this node.
         /// </summary>
-        public uint mesh;
+        public int mesh;
 
         /// <summary>
         /// The node's unit quaternion rotation in the order (x, y, z, w),
@@ -69,6 +69,6 @@ namespace Gltf.Schema
         /// The weights of the instantiated Morph Target.
         /// Number of elements must match number of Morph Targets of used mesh.
         /// </summary>
-        public List<double> weights;
+        public double[] weights;
     }
 }
