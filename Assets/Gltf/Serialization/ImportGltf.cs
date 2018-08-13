@@ -14,6 +14,12 @@ namespace Gltf.Serialization
         /// <returns></returns>
         public static GameObject ImportGltfObject(GltfObject gltfObject)
         {
+            if (!gltfObject.asset.version.Contains("2.0"))
+            {
+                Debug.LogWarning($"Expected glTF 2.0, but this asset is using {gltfObject.asset.version}");
+                return null;
+            }
+
             gltfObject.GameObjectReference = new GameObject($"glTF Scene {gltfObject.Name}");
 
             for (int i = 0; i < gltfObject.buffers?.Length; i++)
