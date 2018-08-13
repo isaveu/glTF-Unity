@@ -10,6 +10,8 @@ Unity glTF 2.0 serialization using `UnityEditor.JsonUtility`.
     - [x] Construct GameObject from GltfObject Data
     - [x] Apply texture to GameObject
     - [ ] Apply PBR Settings to material
+    - [ ] Import skinned meshes
+    - [ ] Import Animations
 - [ ] Export Asset
     - [ ] Export asset at runtime
     - [ ] Export asset from editor
