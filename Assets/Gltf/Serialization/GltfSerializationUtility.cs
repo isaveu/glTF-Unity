@@ -25,7 +25,7 @@ namespace Gltf.Serialization
             gltfObject.Uri = uri;
             int nameStart = uri.LastIndexOf("\\", StringComparison.Ordinal) + 1;
             int nameLength = uri.Length - nameStart;
-            gltfObject.Name = uri.Substring(nameStart, nameLength).Replace(".gltf", "");
+            gltfObject.Name = uri.Substring(nameStart, nameLength).Replace(".gltf", string.Empty);
             var watch = new Stopwatch();
             watch.Start();
             ImportGltf.ImportGltfObject(gltfObject);
@@ -46,7 +46,7 @@ namespace Gltf.Serialization
             var gltfObject = JsonUtility.FromJson<GltfObject>(jsonString);
             watch.Stop();
 
-            Debug.Log($"Json Deserialized in {watch.ElapsedMilliseconds}");
+            Debug.Log($"Json Deserialized in : {watch.ElapsedMilliseconds}");
             watch.Reset();
             watch.Start();
 
