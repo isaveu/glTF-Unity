@@ -31,7 +31,7 @@ namespace Gltf.Schema
         /// <minimum>0</minimum>
         /// <maximum>255</maximum>
         /// </summary>
-        public byte byteStride;
+        public int byteStride = -1;
 
         /// <summary>
         /// The target that the WebGL buffer should be bound to.
@@ -39,5 +39,7 @@ namespace Gltf.Schema
         /// When this is not provided, the bufferView contains animation or skin data.
         /// </summary>
         public GltfBufferViewTarget target = GltfBufferViewTarget.None;
+
+        public GltfBuffer Buffer { get; set; }
     }
 }

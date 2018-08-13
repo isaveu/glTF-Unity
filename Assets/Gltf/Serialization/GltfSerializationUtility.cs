@@ -26,7 +26,11 @@ namespace Gltf.Serialization
             int nameStart = uri.LastIndexOf("\\", StringComparison.Ordinal) + 1;
             int nameLength = uri.Length - nameStart;
             gltfObject.Name = uri.Substring(nameStart, nameLength).Replace(".gltf", "");
+            var watch = new Stopwatch();
+            watch.Start();
             ImportGltf.ImportGltfObject(gltfObject);
+            watch.Stop();
+            Debug.Log($"Imported GltfObject in : {watch.ElapsedMilliseconds}");
             return gltfObject;
         }
 
@@ -96,7 +100,7 @@ namespace Gltf.Serialization
             watch.Reset();
             watch.Start();
 
-            var meshPrimitiveAttributes = GetGltfMeshPrimitiveAttribute(jsonString);
+            var meshPrimitiveAttributes = GetGltfMeshPrimitiveAttributes(jsonString);
 
             foreach (var meshPrimitiveAttribute in meshPrimitiveAttributes)
             {
@@ -124,14 +128,14 @@ namespace Gltf.Serialization
         /// <param name="jsonString">The json string to search.</param>
         /// <param name="handle">The handle to look for.</param>
         /// <returns>A snippet of the json string that defines the object.</returns>
-        public static string GetJsonObject(string jsonString, string handle)
+        private static string GetJsonObject(string jsonString, string handle)
         {
             var regex = new Regex($"\"{handle}\"\\s*:\\s*\\{{");
             var match = regex.Match(jsonString);
             return match.Success ? GetJsonObject(jsonString, match.Index + match.Length) : null;
         }
 
-        public static Dictionary<string, string> GetGltfMeshPrimitiveAttribute(string jsonString)
+        private static Dictionary<string, string> GetGltfMeshPrimitiveAttributes(string jsonString)
         {
             var regex = new Regex("(?:\"primitives\"[^\\]][^\\}]+(?<Attributes>\"attributes\"[^}]+}))[^\\]]+[^}]+(?<Name>\"\\w*\")");
             return GetGltfMeshPrimitiveAttributes(jsonString, regex);
@@ -162,7 +166,7 @@ namespace Gltf.Serialization
         /// <param name="jsonString">The json string to search.</param>
         /// <param name="handle">The handle to look for.</param>
         /// <returns>A collection of snippets with the json string that defines the object.</returns>
-        public static Dictionary<string, string> GetGltfExtensionObjects(string jsonString, string handle)
+        private static Dictionary<string, string> GetGltfExtensionObjects(string jsonString, string handle)
         {
             var regex = new Regex($"(\"name\":\\s*\"\\w*\",\\s*\"extensions\":\\s*{{\\s*?)(\"{handle}\"\\s*:\\s*{{)");
             return GetGltfExtensions(jsonString, regex);

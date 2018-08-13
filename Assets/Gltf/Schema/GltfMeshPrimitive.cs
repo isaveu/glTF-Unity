@@ -22,12 +22,12 @@ namespace Gltf.Schema
         /// or 5125 (UNSIGNED_INT), the latter is only allowed
         /// when `OES_element_index_uint` extension is used; `type` must be `\"SCALAR\"`.
         /// </summary>
-        public int indices;
+        public int indices = -1;
 
         /// <summary>
         /// The index of the material to apply to this primitive when rendering.
         /// </summary>
-        public int material;
+        public int material = -1;
 
         /// <summary>
         /// The type of primitives to render. All valid values correspond to WebGL enums.

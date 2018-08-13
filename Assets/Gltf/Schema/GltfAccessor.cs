@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 
 namespace Gltf.Schema
 {
@@ -27,7 +26,7 @@ namespace Gltf.Schema
         /// 5125 (UNSIGNED_INT) is only allowed when the accessor contains indices
         /// i.e., the accessor is only referenced by `primitive.indices`.
         /// </summary>
-        public string componentType;
+        public GltfComponentType componentType;
 
         /// <summary>
         /// Specifies whether integer data values should be normalized
@@ -67,7 +66,7 @@ namespace Gltf.Schema
         /// <minItems>1</minItems>
         /// <maxItems>16</maxItems>
         /// </summary>
-        public double[] max;
+        public float[] max;
 
         /// <summary>
         /// Minimum value of each component in this attribute.
@@ -85,11 +84,13 @@ namespace Gltf.Schema
         /// <minItems>1</minItems>
         /// <maxItems>16</maxItems>
         /// </summary>
-        public double[] min;
+        public float[] min;
 
         /// <summary>
         /// Sparse storage of attributes that deviate from their initialization value.
         /// </summary>
         public GltfAccessorSparse sparse;
+
+        public GltfBufferView BufferView { get; set; }
     }
 }

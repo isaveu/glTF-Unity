@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
+using UnityEngine;
 
 namespace Gltf.Schema
 {
@@ -27,7 +27,7 @@ namespace Gltf.Schema
         /// <summary>
         /// The index of the camera referenced by this node.
         /// </summary>
-        public int camera;
+        public int camera = -1;
 
         /// <summary>
         /// The indices of this node's children.
@@ -37,17 +37,19 @@ namespace Gltf.Schema
         /// <summary>
         /// The index of the skin referenced by this node.
         /// </summary>
-        public int skin;
+        public int skin = -1;
 
         /// <summary>
         /// A floating-point 4x4 transformation matrix stored in column-major order.
         /// </summary>
-        public float[] matrix;
+        public double[] matrix;
+
+        public Matrix4x4 Matrix { get; set; }
 
         /// <summary>
         /// The index of the mesh in this node.
         /// </summary>
-        public int mesh;
+        public int mesh = -1;
 
         /// <summary>
         /// The node's unit quaternion rotation in the order (x, y, z, w),
