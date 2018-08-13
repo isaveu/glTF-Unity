@@ -151,7 +151,7 @@ namespace Gltf.Serialization
 
             for (var i = 0; i < matches.Count; i++)
             {
-                jsonObjects.Add(matches[i].Groups["Attributes"].Captures[0].Value.Replace("\"attributes\": ", string.Empty));
+                jsonObjects.Add(matches[i].Groups["Attributes"].Captures[0].Value.Replace("\"attributes\":", string.Empty));
             }
 
             return jsonObjects;
