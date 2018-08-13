@@ -104,24 +104,12 @@ namespace Gltf.Serialization
 
             var meshPrimitiveAttributes = GetGltfMeshPrimitiveAttributes(jsonString);
 
-            foreach (var meshPrimitiveAttribute in meshPrimitiveAttributes)
+            for (int i = 0; i < gltfObject.meshes.Length; i++)
             {
-                if (gltfObject.meshes.Length == 1 && gltfObject.meshes[0].primitives.Length == 1)
+                for (int j = 0; j < gltfObject.meshes[i].primitives.Length; j++)
                 {
-                    gltfObject.meshes[0].primitives[0].Attributes = JsonUtility.FromJson<GltfMeshPrimitiveAttributes>(meshPrimitiveAttribute.Value);
-                    break;
-                }
-
-                for (int i = 0; i < gltfObject.meshes.Length; i++)
-                {
-                    if (!string.IsNullOrEmpty(gltfObject.meshes[i].name) &&
-                        gltfObject.meshes[i].name.Equals(meshPrimitiveAttribute.Key))
-                    {
-                        for (int j = 0; j < gltfObject.meshes[i].primitives.Length; j++)
-                        {
-                            gltfObject.meshes[i].primitives[j].Attributes = JsonUtility.FromJson<GltfMeshPrimitiveAttributes>(meshPrimitiveAttribute.Value);
-                        }
-                    }
+                    gltfObject.meshes[i].primitives[j].Attributes = JsonUtility.FromJson<GltfMeshPrimitiveAttributes>(meshPrimitiveAttributes[0]);
+                    meshPrimitiveAttributes.Remove(meshPrimitiveAttributes[0]);
                 }
             }
 
@@ -144,44 +132,26 @@ namespace Gltf.Serialization
             return match.Success ? GetJsonObject(jsonString, match.Index + match.Length) : null;
         }
 
-        private static Dictionary<string, string> GetGltfMeshPrimitiveAttributes(string jsonString)
+        private static List<string> GetGltfMeshPrimitiveAttributes(string jsonString)
         {
-            var regex1 = new Regex("(?:\"primitives\"[^\\]][^\\}]+(?<Attributes>\"attributes\"[^}]+}))[^\\]]+[^}]+(?<Name>\"\\w*\")");
-            var regex2 = new Regex("(?<Name>\"name\"[^\\]][^\\}]+(?<Attributes>\"attributes\"[^}]+}))");
-            return GetGltfMeshPrimitiveAttributes(jsonString, regex1, regex2);
+            var regex = new Regex("(?<Attributes>\"attributes\"[^}]+})");
+            return GetGltfMeshPrimitiveAttributes(jsonString, regex);
         }
 
-        private static Dictionary<string, string> GetGltfMeshPrimitiveAttributes(string jsonString, Regex regex1, Regex regex2)
+        private static List<string> GetGltfMeshPrimitiveAttributes(string jsonString, Regex regex)
         {
-            var jsonObjects = new Dictionary<string, string>();
+            var jsonObjects = new List<string>();
 
-            if (!regex1.IsMatch(jsonString) && !regex2.IsMatch(jsonString))
+            if (!regex.IsMatch(jsonString))
             {
                 return jsonObjects;
             }
 
-            MatchCollection matches = regex1.Matches(jsonString);
+            MatchCollection matches = regex.Matches(jsonString);
 
             for (var i = 0; i < matches.Count; i++)
             {
-                var name = matches[i].Groups["Name"].Captures[0].Value.Replace("\"", string.Empty);
-
-                if (!jsonObjects.ContainsKey(name))
-                {
-                    jsonObjects.Add(name, matches[i].Groups["Attributes"].Captures[0].Value.Replace("\"attributes\": ", string.Empty));
-                }
-            }
-
-            matches = regex2.Matches(jsonString);
-
-            for (var i = 0; i < matches.Count; i++)
-            {
-                var name = GetGltfNodeName(matches[i].Groups["Name"].Captures[0].Value);
-
-                if (!jsonObjects.ContainsKey(name))
-                {
-                    jsonObjects.Add(name, matches[i].Groups["Attributes"].Captures[0].Value.Replace("\"attributes\": ", string.Empty));
-                }
+                jsonObjects.Add(matches[i].Groups["Attributes"].Captures[0].Value.Replace("\"attributes\": ", string.Empty));
             }
 
             return jsonObjects;
