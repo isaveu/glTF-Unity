@@ -1,12 +1,12 @@
 # glTF-Unity
 Unity glTF 2.0 serialization using `UnityEditor.JsonUtility`.
 
-- [ ] Import Asset
-    - [ ] .gltf file extension
+- [x] Import Asset
+    - [x] .gltf file extension
     - [ ] .glb file extension
-    - [ ] Json string
-    - [ ] Construct GameObject from GltfObject Data
-    - [ ] Apply texture to GameObject
+    - [x] Json string
+    - [x] Construct GameObject from GltfObject Data
+    - [x] Apply texture to GameObject
     - [ ] Apply PBR Settings to material
 - [ ] Export Asset
 
