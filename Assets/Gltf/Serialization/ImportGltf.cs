@@ -26,6 +26,11 @@ namespace Gltf.Serialization
                 gltfObject.ConstructTexture(gltfObject.textures[i]);
             }
 
+            for (int i = 0; i < gltfObject.materials?.Length; i++)
+            {
+                gltfObject.ConstructMaterial(gltfObject.materials[i], i);
+            }
+
             if (gltfObject.scenes == null)
             {
                 Debug.LogError($"No scenes found for {gltfObject.Name}");
@@ -39,21 +44,79 @@ namespace Gltf.Serialization
             return gltfObject.GameObjectReference;
         }
 
-        private static void ConstructBuffer(this GltfObject gltfObject, GltfBuffer gltfObjectBuffer)
+        private static void ConstructBuffer(this GltfObject gltfObject, GltfBuffer gltfBuffer)
         {
             var parentDirectory = Directory.GetParent(gltfObject.Uri);
-            gltfObjectBuffer.BufferData = File.ReadAllBytes($"{parentDirectory}\\{gltfObjectBuffer.uri}");
+            gltfBuffer.BufferData = File.ReadAllBytes($"{parentDirectory}\\{gltfBuffer.uri}");
         }
 
-        private static void ConstructTexture(this GltfObject gltfObject, GltfTexture gltfObjectTexture)
+        private static void ConstructTexture(this GltfObject gltfObject, GltfTexture gltfTexture)
         {
             var parentDirectory = Directory.GetParent(gltfObject.Uri);
-            GltfImage gltfImage = gltfObject.images[gltfObjectTexture.source];
+            GltfImage gltfImage = gltfObject.images[gltfTexture.source];
 
             // TODO Check if texture is in unity project, and use the asset instead.
 
             gltfImage.Texture = new Texture2D(0, 0);
-            gltfImage.Texture.LoadImage(File.ReadAllBytes($"{parentDirectory}\\{gltfImage.uri}"), true);
+            gltfImage.Texture.LoadImage(File.ReadAllBytes($"{parentDirectory}\\{gltfImage.uri}"), false);
+        }
+
+        private static void ConstructMaterial(this GltfObject gltfObject, GltfMaterial gltfMaterial, int materialId)
+        {
+            Shader shader = Shader.Find("Standard");
+
+            if (shader == null)
+            {
+                Debug.LogWarning("No Standard shader found. Falling back to Legacy Diffuse");
+                shader = Shader.Find("Legacy Shaders/Diffuse");
+            }
+
+            var material = new Material(shader)
+            {
+                name = string.IsNullOrEmpty(gltfMaterial.name) ? $"Gltf Material {materialId}" : gltfMaterial.name
+            };
+
+            if (gltfMaterial.pbrMetallicRoughness.baseColorTexture.index >= 0)
+            {
+                material.mainTexture = gltfObject.images[gltfMaterial.pbrMetallicRoughness.baseColorTexture.index].Texture;
+                material.color = gltfMaterial.pbrMetallicRoughness.baseColorFactor.GetColorValue();
+            }
+
+            if (gltfMaterial.pbrMetallicRoughness.metallicRoughnessTexture.index >= 0 && material.HasProperty("_MetallicGlossMap"))
+            {
+                var texture = gltfObject.images[gltfMaterial.pbrMetallicRoughness.metallicRoughnessTexture.index].Texture;
+                var pixels = texture.GetPixels();
+                var newPixels = new Color[pixels.Length];
+
+                for (int c = 0; c < pixels.Length; c++)
+                {
+                    // Unity only looks for metal in R channel, and smoothness in A.
+                    newPixels[c] = new Color(pixels[c].g, 0f, 0f, pixels[c].b);
+                }
+
+                texture.SetPixels(newPixels);
+                texture.Apply();
+
+                material.SetTexture("_MetallicGlossMap", gltfObject.images[gltfMaterial.pbrMetallicRoughness.metallicRoughnessTexture.index].Texture);
+                material.SetFloat("_Glossiness", (float)gltfMaterial.pbrMetallicRoughness.roughnessFactor);
+                material.SetFloat("_Metallic", (float)gltfMaterial.pbrMetallicRoughness.metallicFactor);
+                material.EnableKeyword("_METALLICGLOSSMAP");
+            }
+
+            if (gltfMaterial.normalTexture.index >= 0 && material.HasProperty("_BumpMap"))
+            {
+                material.SetTexture("_BumpMap", gltfObject.images[gltfMaterial.normalTexture.index].Texture);
+                material.EnableKeyword("_NORMALMAP");
+            }
+
+            if (gltfMaterial.emissiveTexture.index >= 0 && material.HasProperty("_EmissionMap"))
+            {
+                material.SetTexture("_EmissionMap", gltfObject.images[gltfMaterial.emissiveTexture.index].Texture);
+                material.SetColor("_EmissionColor", gltfMaterial.emissiveFactor.GetColorValue());
+                material.EnableKeyword("_EMISSION");
+            }
+
+            gltfMaterial.Material = material;
         }
 
         private static void ConstructScene(this GltfObject gltfObject, GltfScene gltfScene)
@@ -128,18 +191,7 @@ namespace Gltf.Serialization
                 var renderer = parent.gameObject.AddComponent<MeshRenderer>();
                 var filter = parent.gameObject.AddComponent<MeshFilter>();
                 filter.sharedMesh = meshPrimitive;
-
-                var shader = Shader.Find("Standard");
-
-                if (shader == null)
-                {
-                    shader = Shader.Find("Legacy Shaders/Diffuse");
-                }
-
-                renderer.sharedMaterial = new Material(shader)
-                {
-                    mainTexture = gltfObject.images[gltfMesh.primitives[i].material].Texture
-                };
+                renderer.sharedMaterial = gltfObject.materials[gltfMesh.primitives[i].material].Material;
             }
         }
 

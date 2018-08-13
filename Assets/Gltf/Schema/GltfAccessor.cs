@@ -9,14 +9,13 @@ namespace Gltf.Schema
         /// The index of the bufferView.
         /// If this is undefined, look in the sparse object for the index and value buffer views.
         /// </summary>
-        public int bufferView;
+        public int bufferView = -1;
 
         /// <summary>
         /// The offset relative to the start of the bufferView in bytes.
         /// This must be a multiple of the size of the component datatype.
-        /// <minimum>0</minimum>
         /// </summary>
-        public int byteOffset;
+        public int byteOffset = -1;
 
         /// <summary>
         /// The datatype of components in the attribute.
@@ -41,7 +40,7 @@ namespace Gltf.Schema
         /// with the number of bytes or number of components.
         /// <minimum>1</minimum>
         /// </summary>
-        public int count;
+        public int count = 1;
 
         /// <summary>
         /// Specifies if the attribute is a scalar, vector, or matrix,

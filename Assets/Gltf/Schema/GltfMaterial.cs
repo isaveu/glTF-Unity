@@ -1,4 +1,5 @@
 ﻿using System;
+using UnityEngine;
 
 namespace Gltf.Schema
 {
@@ -77,5 +78,7 @@ namespace Gltf.Schema
         /// lighting equation is evaluated.
         /// </summary>
         public bool doubleSided;
+
+        public Material Material { get; set; }
     }
 }
