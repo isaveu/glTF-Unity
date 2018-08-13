@@ -2,6 +2,8 @@
 Unity glTF 2.0 serialization using `UnityEditor.JsonUtility`.
 
 - [x] Import Asset
+    - [x] Import asset at runtime
+    - [ ] Custom asset importer for editor
     - [x] .gltf file extension
     - [ ] .glb file extension
     - [x] Json string
