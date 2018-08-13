@@ -11,8 +11,10 @@ Unity glTF 2.0 serialization using `UnityEditor.JsonUtility`.
     - [x] Apply texture to GameObject
     - [ ] Apply PBR Settings to material
 - [ ] Export Asset
-    - [ ] .gltf
-    - [ ] .glb
+    - [ ] Export asset at runtime
+    - [ ] Export asset from editor
+    - [ ] .gltf file extension
+    - [ ] .glb file extension
 
 # Supported Extensions
 - KHR_materials_pbrSpecularGlossiness
