@@ -14,6 +14,12 @@ namespace Gltf.Serialization
         /// <returns></returns>
         public static GameObject ImportGltfObject(GltfObject gltfObject)
         {
+            if (!gltfObject.asset.version.Contains("2.0"))
+            {
+                Debug.LogWarning($"Expected glTF 2.0, but this asset is using {gltfObject.asset.version}");
+                return null;
+            }
+
             gltfObject.GameObjectReference = new GameObject($"glTF Scene {gltfObject.Name}");
 
             for (int i = 0; i < gltfObject.buffers?.Length; i++)
@@ -55,7 +61,7 @@ namespace Gltf.Serialization
             var parentDirectory = Directory.GetParent(gltfObject.Uri);
             GltfImage gltfImage = gltfObject.images[gltfTexture.source];
 
-            // TODO Check if texture is in unity project, and use the asset instead.
+            // TODO Check if texture is in unity project, and use the asset reference instead.
 
             gltfImage.Texture = new Texture2D(0, 0);
             gltfImage.Texture.LoadImage(File.ReadAllBytes($"{parentDirectory}\\{gltfImage.uri}"), false);
@@ -79,41 +85,46 @@ namespace Gltf.Serialization
             if (gltfMaterial.pbrMetallicRoughness.baseColorTexture.index >= 0)
             {
                 material.mainTexture = gltfObject.images[gltfMaterial.pbrMetallicRoughness.baseColorTexture.index].Texture;
-                material.color = gltfMaterial.pbrMetallicRoughness.baseColorFactor.GetColorValue();
             }
 
-            if (gltfMaterial.pbrMetallicRoughness.metallicRoughnessTexture.index >= 0 && material.HasProperty("_MetallicGlossMap"))
-            {
-                var texture = gltfObject.images[gltfMaterial.pbrMetallicRoughness.metallicRoughnessTexture.index].Texture;
-                var pixels = texture.GetPixels();
-                var newPixels = new Color[pixels.Length];
+            material.color = gltfMaterial.pbrMetallicRoughness.baseColorFactor.GetColorValue();
 
-                for (int c = 0; c < pixels.Length; c++)
+            if (material.HasProperty("_MetallicGlossMap"))
+            {
+                if (gltfMaterial.pbrMetallicRoughness.metallicRoughnessTexture.index >= 0)
                 {
-                    // Unity only looks for metal in R channel, and smoothness in A.
-                    newPixels[c] = new Color(pixels[c].g, 0f, 0f, pixels[c].b);
+                    var texture = gltfObject.images[gltfMaterial.pbrMetallicRoughness.metallicRoughnessTexture.index].Texture;
+                    var pixels = texture.GetPixels();
+                    var newPixels = new Color[pixels.Length];
+
+                    for (int c = 0; c < pixels.Length; c++)
+                    {
+                        // Unity only looks for metal in R channel, and smoothness in A.
+                        newPixels[c] = new Color(pixels[c].g, 0f, 0f, pixels[c].b);
+                    }
+
+                    texture.SetPixels(newPixels);
+                    texture.Apply();
+
+                    material.SetTexture("_MetallicGlossMap", gltfObject.images[gltfMaterial.pbrMetallicRoughness.metallicRoughnessTexture.index].Texture);
                 }
 
-                texture.SetPixels(newPixels);
-                texture.Apply();
-
-                material.SetTexture("_MetallicGlossMap", gltfObject.images[gltfMaterial.pbrMetallicRoughness.metallicRoughnessTexture.index].Texture);
                 material.SetFloat("_Glossiness", (float)gltfMaterial.pbrMetallicRoughness.roughnessFactor);
                 material.SetFloat("_Metallic", (float)gltfMaterial.pbrMetallicRoughness.metallicFactor);
-                material.EnableKeyword("_METALLICGLOSSMAP");
+                material.EnableKeyword("_MetallicGlossMap");
             }
 
             if (gltfMaterial.normalTexture.index >= 0 && material.HasProperty("_BumpMap"))
             {
                 material.SetTexture("_BumpMap", gltfObject.images[gltfMaterial.normalTexture.index].Texture);
-                material.EnableKeyword("_NORMALMAP");
+                material.EnableKeyword("_BumpMap");
             }
 
             if (gltfMaterial.emissiveTexture.index >= 0 && material.HasProperty("_EmissionMap"))
             {
                 material.SetTexture("_EmissionMap", gltfObject.images[gltfMaterial.emissiveTexture.index].Texture);
                 material.SetColor("_EmissionColor", gltfMaterial.emissiveFactor.GetColorValue());
-                material.EnableKeyword("_EMISSION");
+                material.EnableKeyword("_EmissionMap");
             }
 
             gltfMaterial.Material = material;
