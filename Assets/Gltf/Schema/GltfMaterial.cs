@@ -62,7 +62,7 @@ namespace Gltf.Schema
         /// the source and destination areas. The rendered output is combined with the background
         /// using the normal painting operation (i.e. the Porter and Duff over operator).
         /// </summary>
-        public GltfAlphaMode alphaMode = GltfAlphaMode.OPAQUE;
+        public string alphaMode;
 
         /// <summary>
         /// Specifies the cutoff threshold when in `MASK` mode. If the alpha value is greater than

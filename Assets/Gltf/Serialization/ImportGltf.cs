@@ -93,23 +93,23 @@ namespace Gltf.Serialization
 
             material.color = gltfMaterial.pbrMetallicRoughness.baseColorFactor.GetColorValue();
 
-            if (gltfMaterial.alphaMode == GltfAlphaMode.MASK)
+            if (gltfMaterial.alphaMode == "MASK")
             {
                 if (material.HasProperty("_ALPHATEST_ON"))
                 {
                     material.SetOverrideTag("RenderType", "Cut out");
-                    material.EnableKeyword("_ALPHATEST_ON");
                     material.renderQueue = (int)RenderQueue.AlphaTest;
                     material.SetFloat("_Mode", (float)gltfMaterial.alphaCutoff);
+                    material.EnableKeyword("_ALPHATEST_ON");
                 }
             }
-            else if (gltfMaterial.alphaMode == GltfAlphaMode.BLEND)
+            else if (gltfMaterial.alphaMode == "BLEND")
             {
                 if (material.HasProperty("_ALPHAPREMULTIPLY_ON"))
                 {
                     material.SetOverrideTag("RenderType", "Transparent");
-                    material.EnableKeyword("_ALPHAPREMULTIPLY_ON");
                     material.renderQueue = (int)RenderQueue.Transparent;
+                    material.EnableKeyword("_ALPHAPREMULTIPLY_ON");
                 }
             }
 
@@ -135,7 +135,7 @@ namespace Gltf.Serialization
                     material.SetTexture("_MetallicGlossMap", gltfObject.images[gltfMaterial.pbrMetallicRoughness.metallicRoughnessTexture.index].Texture);
                 }
 
-                material.SetFloat("_Glossiness", (float)gltfMaterial.pbrMetallicRoughness.roughnessFactor);
+                material.SetFloat("_Glossiness", Mathf.Abs((float)gltfMaterial.pbrMetallicRoughness.roughnessFactor - 1f));
                 material.SetFloat("_Metallic", (float)gltfMaterial.pbrMetallicRoughness.metallicFactor);
                 material.EnableKeyword("_MetallicGlossMap");
             }
@@ -344,8 +344,6 @@ namespace Gltf.Serialization
             }
 
             mesh.RecalculateBounds();
-            mesh.RecalculateNormals();
-            mesh.RecalculateTangents();
 
             return mesh;
         }
