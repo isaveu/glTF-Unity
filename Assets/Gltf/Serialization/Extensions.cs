@@ -13,11 +13,12 @@ namespace Gltf.Serialization
 
         public static readonly Vector4 TangentSpaceConversionScale = new Vector4(-1, 1, 1, -1);
 
-        public static void GetTrsProperties(this GltfNode node, out Vector3 position, out Quaternion rotation, out Vector3 scale)
+        public static Matrix4x4 GetTrsProperties(this GltfNode node, out Vector3 position, out Quaternion rotation, out Vector3 scale)
         {
+            Matrix4x4 matrix = node.matrix.GetMatrix4X4Value();
+
             if (!node.useTRS)
             {
-                Matrix4x4 matrix = node.matrix.GetMatrix4X4Value();
                 matrix.GetTrsProperties(out position, out rotation, out scale);
             }
             else
@@ -26,6 +27,8 @@ namespace Gltf.Serialization
                 rotation = node.rotation.GetQuaternionValue();
                 scale = node.scale.GetVector3Value(false);
             }
+
+            return matrix;
         }
 
         public static Color GetColorValue(this float[] colorArray)
@@ -177,7 +180,7 @@ namespace Gltf.Serialization
             return array;
         }
 
-        public static Vector2[] GetVector2Array(this GltfAccessor accessor, bool flip = true, bool normalizeIntValues = true)
+        public static Vector2[] GetVector2Array(this GltfAccessor accessor, bool flip = true)
         {
             if (accessor.type != "VEC2" || accessor.componentType == GltfComponentType.UnsignedInt)
             {
@@ -198,7 +201,7 @@ namespace Gltf.Serialization
                 byteOffset += accessor.byteOffset;
             }
 
-            if (normalizeIntValues) { maxValue = 1; }
+            if (accessor.normalized) { maxValue = 1; }
 
             for (int i = 0; i < accessor.count; i++)
             {
@@ -222,7 +225,7 @@ namespace Gltf.Serialization
             return array;
         }
 
-        public static Vector3[] GetVector3Array(this GltfAccessor accessor, bool convert = true, bool normalizeIntValues = true)
+        public static Vector3[] GetVector3Array(this GltfAccessor accessor, bool convert = true)
         {
             if (accessor.type != "VEC3" || accessor.componentType == GltfComponentType.UnsignedInt)
             {
@@ -243,7 +246,7 @@ namespace Gltf.Serialization
                 byteOffset += accessor.byteOffset;
             }
 
-            if (normalizeIntValues) { maxValue = 1; }
+            if (accessor.normalized) { maxValue = 1; }
 
             for (int i = 0; i < accessor.count; i++)
             {
@@ -271,7 +274,7 @@ namespace Gltf.Serialization
             return array;
         }
 
-        public static Vector4[] GetVector4Array(this GltfAccessor accessor, bool convert = true, bool normalizeIntValues = true)
+        public static Vector4[] GetVector4Array(this GltfAccessor accessor, bool convert = true)
         {
             if (accessor.type != "VEC4" || accessor.componentType == GltfComponentType.UnsignedInt)
             {
@@ -292,7 +295,7 @@ namespace Gltf.Serialization
                 byteOffset += accessor.byteOffset;
             }
 
-            if (normalizeIntValues) { maxValue = 1; }
+            if (accessor.normalized) { maxValue = 1; }
 
             for (int i = 0; i < accessor.count; i++)
             {

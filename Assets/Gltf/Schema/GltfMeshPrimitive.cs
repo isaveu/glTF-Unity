@@ -32,7 +32,7 @@ namespace Gltf.Schema
         /// <summary>
         /// The type of primitives to render. All valid values correspond to WebGL enums.
         /// </summary>
-        public GltfDrawMode mode;
+        public GltfDrawMode mode = GltfDrawMode.Triangles;
 
         #endregion Serialized Fields
 

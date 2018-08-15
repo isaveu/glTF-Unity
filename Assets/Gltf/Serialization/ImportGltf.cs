@@ -59,12 +59,16 @@ namespace Gltf.Serialization
         private static void ConstructTexture(this GltfObject gltfObject, GltfTexture gltfTexture)
         {
             var parentDirectory = Directory.GetParent(gltfObject.Uri);
-            GltfImage gltfImage = gltfObject.images[gltfTexture.source];
 
-            // TODO Check if texture is in unity project, and use the asset reference instead.
+            if (gltfTexture.source >= 0)
+            {
+                GltfImage gltfImage = gltfObject.images[gltfTexture.source];
 
-            gltfImage.Texture = new Texture2D(0, 0);
-            gltfImage.Texture.LoadImage(File.ReadAllBytes($"{parentDirectory}\\{gltfImage.uri}"), false);
+                // TODO Check if texture is in unity project, and use the asset reference instead.
+
+                gltfImage.Texture = new Texture2D(0, 0);
+                gltfImage.Texture.LoadImage(File.ReadAllBytes($"{parentDirectory}\\{gltfImage.uri}"), false);
+            }
         }
 
         private static void ConstructMaterial(this GltfObject gltfObject, GltfMaterial gltfMaterial, int materialId)
@@ -89,8 +93,30 @@ namespace Gltf.Serialization
 
             material.color = gltfMaterial.pbrMetallicRoughness.baseColorFactor.GetColorValue();
 
+            if (gltfMaterial.alphaMode == GltfAlphaMode.MASK)
+            {
+                if (material.HasProperty("_ALPHATEST_ON"))
+                {
+                    material.SetOverrideTag("RenderType", "Cut out");
+                    material.EnableKeyword("_ALPHATEST_ON");
+                    material.renderQueue = (int)RenderQueue.AlphaTest;
+                    material.SetFloat("_Mode", (float)gltfMaterial.alphaCutoff);
+                }
+            }
+            else if (gltfMaterial.alphaMode == GltfAlphaMode.BLEND)
+            {
+                if (material.HasProperty("_ALPHAPREMULTIPLY_ON"))
+                {
+                    material.SetOverrideTag("RenderType", "Transparent");
+                    material.EnableKeyword("_ALPHAPREMULTIPLY_ON");
+                    material.renderQueue = (int)RenderQueue.Transparent;
+                }
+            }
+
             if (material.HasProperty("_MetallicGlossMap"))
             {
+                // TODO if using extension handle it appropriately.
+
                 if (gltfMaterial.pbrMetallicRoughness.metallicRoughnessTexture.index >= 0)
                 {
                     var texture = gltfObject.images[gltfMaterial.pbrMetallicRoughness.metallicRoughnessTexture.index].Texture;
@@ -125,6 +151,7 @@ namespace Gltf.Serialization
                 material.SetTexture("_EmissionMap", gltfObject.images[gltfMaterial.emissiveTexture.index].Texture);
                 material.SetColor("_EmissionColor", gltfMaterial.emissiveFactor.GetColorValue());
                 material.EnableKeyword("_EmissionMap");
+                material.EnableKeyword("_EMISSION");
             }
 
             gltfMaterial.Material = material;
@@ -149,11 +176,9 @@ namespace Gltf.Serialization
             Quaternion rotation = Quaternion.identity;
             Vector3 scale = Vector3.one;
 
-            if (node.matrix != null)
-            {
-                node.GetTrsProperties(out position, out rotation, out scale);
-            }
-            else
+            node.Matrix = node.GetTrsProperties(out position, out rotation, out scale);
+
+            if (node.Matrix == Matrix4x4.identity)
             {
                 if (node.translation != null)
                 {

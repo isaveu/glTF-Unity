@@ -42,7 +42,7 @@ namespace Gltf.Schema
         /// <summary>
         /// A floating-point 4x4 transformation matrix stored in column-major order.
         /// </summary>
-        public double[] matrix;
+        public double[] matrix = { 1d, 0d, 0d, 0d, 0d, 1d, 0d, 0d, 0d, 0d, 1d, 0d, 0d, 0d, 0d, 1d };
 
         public Matrix4x4 Matrix { get; set; }
 
@@ -55,17 +55,17 @@ namespace Gltf.Schema
         /// The node's unit quaternion rotation in the order (x, y, z, w),
         /// where w is the scalar.
         /// </summary>
-        public float[] rotation;
+        public float[] rotation = { 0f, 0f, 0f, 1f };
 
         /// <summary>
         /// The node's non-uniform scale.
         /// </summary>
-        public float[] scale;
+        public float[] scale = { 1f, 1f, 1f };
 
         /// <summary>
         /// The node's translation.
         /// </summary>
-        public float[] translation;
+        public float[] translation = { 0f, 0f, 0f };
 
         /// <summary>
         /// The weights of the instantiated Morph Target.

@@ -15,6 +15,6 @@ namespace Gltf.Schema
         /// TEXCOORD_&lt;set index&gt; which is a reference to a key in
         /// mesh.primitives.attributes (e.g. A value of 0 corresponds to TEXCOORD_0).
         /// </summary>
-        public int textCoord = -1;
+        public int textCoord = 0;
     }
 }

@@ -20,7 +20,7 @@ namespace Gltf.Schema
         /// interpolation is `\"STEP\"`, animated value remains constant to the value
         /// of the first point of the timeframe, until the next timeframe.
         /// </summary>
-        public GltfInterpolationType interpolation;
+        public GltfInterpolationType interpolation = GltfInterpolationType.LINEAR;
 
         /// <summary>
         /// The index of an accessor, containing keyframe output values. Output and input

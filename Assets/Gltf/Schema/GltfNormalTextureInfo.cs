@@ -10,6 +10,6 @@ namespace Gltf.Schema
         /// This value is ignored if normalTexture is not specified.
         /// This value is linear.
         /// </summary>
-        public double scale;
+        public double scale = 1d;
     }
 }

@@ -14,6 +14,6 @@ namespace Gltf.Schema
         /// <minimum>0.0</minimum>
         /// <maximum>1.0</maximum>
         /// </summary>
-        public double strength;
+        public double strength = 1d;
     }
 }

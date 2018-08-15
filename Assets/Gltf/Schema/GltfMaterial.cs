@@ -51,7 +51,7 @@ namespace Gltf.Schema
         /// <minItems>3</minItems>
         /// <maxItems>3</maxItems>
         /// </summary>
-        public float[] emissiveFactor;
+        public float[] emissiveFactor = { 0f, 0f, 0f, 0f };
 
         /// <summary>
         /// The material's alpha rendering mode enumeration specifying the interpretation of the
@@ -62,14 +62,14 @@ namespace Gltf.Schema
         /// the source and destination areas. The rendered output is combined with the background
         /// using the normal painting operation (i.e. the Porter and Duff over operator).
         /// </summary>
-        public GltfAlphaMode alphaMode;
+        public GltfAlphaMode alphaMode = GltfAlphaMode.OPAQUE;
 
         /// <summary>
         /// Specifies the cutoff threshold when in `MASK` mode. If the alpha value is greater than
         /// or equal to this value then it is rendered as fully opaque, otherwise, it is rendered
         /// as fully transparent. This value is ignored for other modes.
         /// </summary>
-        public double alphaCutoff;
+        public double alphaCutoff = 0.5f;
 
         /// <summary>
         /// Specifies whether the material is double sided. When this value is false, back-face

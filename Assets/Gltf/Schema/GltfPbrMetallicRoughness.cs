@@ -10,7 +10,7 @@ namespace Gltf.Schema
         /// The fourth component (A) is the opacity of the material.
         /// These values are linear.
         /// </summary>
-        public float[] baseColorFactor;
+        public float[] baseColorFactor = { 1f, 1f, 1f, 1f };
 
         /// <summary>
         /// The base color texture.
