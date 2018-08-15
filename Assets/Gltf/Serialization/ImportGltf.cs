@@ -93,23 +93,31 @@ namespace Gltf.Serialization
 
             material.color = gltfMaterial.pbrMetallicRoughness.baseColorFactor.GetColorValue();
 
-            if (gltfMaterial.alphaMode == "MASK")
+            if (shader.name == "Standard")
             {
-                if (material.HasProperty("_ALPHATEST_ON"))
+                if (gltfMaterial.alphaMode == "MASK")
                 {
-                    material.SetOverrideTag("RenderType", "Cut out");
-                    material.renderQueue = (int)RenderQueue.AlphaTest;
-                    material.SetFloat("_Mode", (float)gltfMaterial.alphaCutoff);
+                    material.SetInt("_SrcBlend", (int)BlendMode.One);
+                    material.SetInt("_DstBlend", (int)BlendMode.Zero);
+                    material.SetInt("_ZWrite", 1);
+                    material.SetInt("_Mode", 3);
+                    material.SetOverrideTag("RenderType", "Cutout");
                     material.EnableKeyword("_ALPHATEST_ON");
+                    material.DisableKeyword("_ALPHABLEND_ON");
+                    material.DisableKeyword("_ALPHAPREMULTIPLY_ON");
+                    material.renderQueue = 2450;
                 }
-            }
-            else if (gltfMaterial.alphaMode == "BLEND")
-            {
-                if (material.HasProperty("_ALPHAPREMULTIPLY_ON"))
+                else if (gltfMaterial.alphaMode == "BLEND")
                 {
-                    material.SetOverrideTag("RenderType", "Transparent");
-                    material.renderQueue = (int)RenderQueue.Transparent;
+                    material.SetInt("_SrcBlend", (int)BlendMode.One);
+                    material.SetInt("_DstBlend", (int)BlendMode.OneMinusSrcAlpha);
+                    material.SetInt("_ZWrite", 0);
+                    material.SetInt("_Mode", 3);
+                    material.SetOverrideTag("RenderType", "Transparency");
+                    material.DisableKeyword("_ALPHATEST_ON");
+                    material.DisableKeyword("_ALPHABLEND_ON");
                     material.EnableKeyword("_ALPHAPREMULTIPLY_ON");
+                    material.renderQueue = 3000;
                 }
             }
 
