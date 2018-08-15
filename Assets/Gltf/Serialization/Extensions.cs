@@ -145,6 +145,7 @@ namespace Gltf.Serialization
             GetTypeDetails(accessor.componentType, out componentSize, out maxValue);
             var stride = accessor.BufferView.byteStride > 0 ? accessor.BufferView.byteStride : componentSize;
             var byteOffset = accessor.BufferView.byteOffset;
+            var bufferData = accessor.BufferView.Buffer.BufferData;
 
             if (accessor.byteOffset >= 0)
             {
@@ -155,11 +156,11 @@ namespace Gltf.Serialization
             {
                 if (accessor.componentType == GltfComponentType.Float)
                 {
-                    array[i] = (int)Mathf.Floor(BitConverter.ToSingle(accessor.BufferView.Buffer.BufferData, byteOffset + i * stride));
+                    array[i] = (int)Mathf.Floor(BitConverter.ToSingle(bufferData, byteOffset + i * stride));
                 }
                 else
                 {
-                    array[i] = (int)GetDiscreteUnsignedElement(accessor.BufferView.Buffer.BufferData, byteOffset + i * stride, accessor.componentType);
+                    array[i] = (int)GetDiscreteUnsignedElement(bufferData, byteOffset + i * stride, accessor.componentType);
                 }
             }
 
@@ -190,6 +191,7 @@ namespace Gltf.Serialization
             GetTypeDetails(accessor.componentType, out componentSize, out maxValue);
             var stride = accessor.BufferView.byteStride > 0 ? accessor.BufferView.byteStride : componentSize * 2;
             var byteOffset = accessor.BufferView.byteOffset;
+            var bufferData = accessor.BufferView.Buffer.BufferData;
 
             if (accessor.byteOffset >= 0)
             {
@@ -202,13 +204,13 @@ namespace Gltf.Serialization
             {
                 if (accessor.componentType == GltfComponentType.Float)
                 {
-                    array[i].x = BitConverter.ToSingle(accessor.BufferView.Buffer.BufferData, byteOffset + i * stride + componentSize * 0);
-                    array[i].y = BitConverter.ToSingle(accessor.BufferView.Buffer.BufferData, byteOffset + i * stride + componentSize * 1);
+                    array[i].x = BitConverter.ToSingle(bufferData, byteOffset + i * stride + componentSize * 0);
+                    array[i].y = BitConverter.ToSingle(bufferData, byteOffset + i * stride + componentSize * 1);
                 }
                 else
                 {
-                    array[i].x = GetDiscreteElement(accessor.BufferView.Buffer.BufferData, byteOffset + i * stride + componentSize * 0, accessor.componentType) / maxValue;
-                    array[i].y = GetDiscreteElement(accessor.BufferView.Buffer.BufferData, byteOffset + i * stride + componentSize * 1, accessor.componentType) / maxValue;
+                    array[i].x = GetDiscreteElement(bufferData, byteOffset + i * stride + componentSize * 0, accessor.componentType) / maxValue;
+                    array[i].y = GetDiscreteElement(bufferData, byteOffset + i * stride + componentSize * 1, accessor.componentType) / maxValue;
                 }
 
                 if (flip)
@@ -234,6 +236,7 @@ namespace Gltf.Serialization
             GetTypeDetails(accessor.componentType, out componentSize, out maxValue);
             var stride = accessor.BufferView.byteStride > 0 ? accessor.BufferView.byteStride : componentSize * 3;
             var byteOffset = accessor.BufferView.byteOffset;
+            var bufferData = accessor.BufferView.Buffer.BufferData;
 
             if (accessor.byteOffset >= 0)
             {
@@ -246,15 +249,15 @@ namespace Gltf.Serialization
             {
                 if (accessor.componentType == GltfComponentType.Float)
                 {
-                    array[i].x = BitConverter.ToSingle(accessor.BufferView.Buffer.BufferData, byteOffset + i * stride + componentSize * 0);
-                    array[i].y = BitConverter.ToSingle(accessor.BufferView.Buffer.BufferData, byteOffset + i * stride + componentSize * 1);
-                    array[i].z = BitConverter.ToSingle(accessor.BufferView.Buffer.BufferData, byteOffset + i * stride + componentSize * 2);
+                    array[i].x = BitConverter.ToSingle(bufferData, byteOffset + i * stride + componentSize * 0);
+                    array[i].y = BitConverter.ToSingle(bufferData, byteOffset + i * stride + componentSize * 1);
+                    array[i].z = BitConverter.ToSingle(bufferData, byteOffset + i * stride + componentSize * 2);
                 }
                 else
                 {
-                    array[i].x = GetDiscreteElement(accessor.BufferView.Buffer.BufferData, byteOffset + i * stride + componentSize * 0, accessor.componentType) / maxValue;
-                    array[i].y = GetDiscreteElement(accessor.BufferView.Buffer.BufferData, byteOffset + i * stride + componentSize * 1, accessor.componentType) / maxValue;
-                    array[i].z = GetDiscreteElement(accessor.BufferView.Buffer.BufferData, byteOffset + i * stride + componentSize * 2, accessor.componentType) / maxValue;
+                    array[i].x = GetDiscreteElement(bufferData, byteOffset + i * stride + componentSize * 0, accessor.componentType) / maxValue;
+                    array[i].y = GetDiscreteElement(bufferData, byteOffset + i * stride + componentSize * 1, accessor.componentType) / maxValue;
+                    array[i].z = GetDiscreteElement(bufferData, byteOffset + i * stride + componentSize * 2, accessor.componentType) / maxValue;
                 }
 
                 if (convert)
@@ -282,6 +285,7 @@ namespace Gltf.Serialization
             GetTypeDetails(accessor.componentType, out componentSize, out maxValue);
             var stride = accessor.BufferView.byteStride > 0 ? accessor.BufferView.byteStride : componentSize * 4;
             var byteOffset = accessor.BufferView.byteOffset;
+            var bufferData = accessor.BufferView.Buffer.BufferData;
 
             if (accessor.byteOffset >= 0)
             {
@@ -294,17 +298,17 @@ namespace Gltf.Serialization
             {
                 if (accessor.componentType == GltfComponentType.Float)
                 {
-                    array[i].x = BitConverter.ToSingle(accessor.BufferView.Buffer.BufferData, byteOffset + i * stride + componentSize * 0);
-                    array[i].y = BitConverter.ToSingle(accessor.BufferView.Buffer.BufferData, byteOffset + i * stride + componentSize * 1);
-                    array[i].z = BitConverter.ToSingle(accessor.BufferView.Buffer.BufferData, byteOffset + i * stride + componentSize * 2);
-                    array[i].w = BitConverter.ToSingle(accessor.BufferView.Buffer.BufferData, byteOffset + i * stride + componentSize * 3);
+                    array[i].x = BitConverter.ToSingle(bufferData, byteOffset + i * stride + componentSize * 0);
+                    array[i].y = BitConverter.ToSingle(bufferData, byteOffset + i * stride + componentSize * 1);
+                    array[i].z = BitConverter.ToSingle(bufferData, byteOffset + i * stride + componentSize * 2);
+                    array[i].w = BitConverter.ToSingle(bufferData, byteOffset + i * stride + componentSize * 3);
                 }
                 else
                 {
-                    array[i].x = GetDiscreteElement(accessor.BufferView.Buffer.BufferData, byteOffset + i * stride + componentSize * 0, accessor.componentType) / maxValue;
-                    array[i].y = GetDiscreteElement(accessor.BufferView.Buffer.BufferData, byteOffset + i * stride + componentSize * 1, accessor.componentType) / maxValue;
-                    array[i].z = GetDiscreteElement(accessor.BufferView.Buffer.BufferData, byteOffset + i * stride + componentSize * 2, accessor.componentType) / maxValue;
-                    array[i].w = GetDiscreteElement(accessor.BufferView.Buffer.BufferData, byteOffset + i * stride + componentSize * 3, accessor.componentType) / maxValue;
+                    array[i].x = GetDiscreteElement(bufferData, byteOffset + i * stride + componentSize * 0, accessor.componentType) / maxValue;
+                    array[i].y = GetDiscreteElement(bufferData, byteOffset + i * stride + componentSize * 1, accessor.componentType) / maxValue;
+                    array[i].z = GetDiscreteElement(bufferData, byteOffset + i * stride + componentSize * 2, accessor.componentType) / maxValue;
+                    array[i].w = GetDiscreteElement(bufferData, byteOffset + i * stride + componentSize * 3, accessor.componentType) / maxValue;
                 }
 
                 if (convert)
@@ -335,6 +339,7 @@ namespace Gltf.Serialization
 
             var stride = accessor.BufferView.byteStride > 0 ? accessor.BufferView.byteStride : componentSize * (hasAlpha ? 4 : 3);
             var byteOffset = accessor.BufferView.byteOffset;
+            var bufferData = accessor.BufferView.Buffer.BufferData;
 
             if (accessor.byteOffset >= 0)
             {
@@ -345,17 +350,17 @@ namespace Gltf.Serialization
             {
                 if (accessor.componentType == GltfComponentType.Float)
                 {
-                    array[i].r = BitConverter.ToSingle(accessor.BufferView.Buffer.BufferData, byteOffset + i * stride + componentSize * 0);
-                    array[i].g = BitConverter.ToSingle(accessor.BufferView.Buffer.BufferData, byteOffset + i * stride + componentSize * 1);
-                    array[i].b = BitConverter.ToSingle(accessor.BufferView.Buffer.BufferData, byteOffset + i * stride + componentSize * 2);
-                    array[i].a = hasAlpha ? BitConverter.ToSingle(accessor.BufferView.Buffer.BufferData, byteOffset + i * stride + componentSize * 3) : 1f;
+                    array[i].r = BitConverter.ToSingle(bufferData, byteOffset + i * stride + componentSize * 0);
+                    array[i].g = BitConverter.ToSingle(bufferData, byteOffset + i * stride + componentSize * 1);
+                    array[i].b = BitConverter.ToSingle(bufferData, byteOffset + i * stride + componentSize * 2);
+                    array[i].a = hasAlpha ? BitConverter.ToSingle(bufferData, byteOffset + i * stride + componentSize * 3) : 1f;
                 }
                 else
                 {
-                    array[i].r = GetDiscreteElement(accessor.BufferView.Buffer.BufferData, byteOffset + i * stride + componentSize * 0, accessor.componentType) / maxValue;
-                    array[i].g = GetDiscreteElement(accessor.BufferView.Buffer.BufferData, byteOffset + i * stride + componentSize * 1, accessor.componentType) / maxValue;
-                    array[i].b = GetDiscreteElement(accessor.BufferView.Buffer.BufferData, byteOffset + i * stride + componentSize * 2, accessor.componentType) / maxValue;
-                    array[i].a = hasAlpha ? GetDiscreteElement(accessor.BufferView.Buffer.BufferData, byteOffset + i * stride + componentSize * 3, accessor.componentType) / maxValue : 1f;
+                    array[i].r = GetDiscreteElement(bufferData, byteOffset + i * stride + componentSize * 0, accessor.componentType) / maxValue;
+                    array[i].g = GetDiscreteElement(bufferData, byteOffset + i * stride + componentSize * 1, accessor.componentType) / maxValue;
+                    array[i].b = GetDiscreteElement(bufferData, byteOffset + i * stride + componentSize * 2, accessor.componentType) / maxValue;
+                    array[i].a = hasAlpha ? GetDiscreteElement(bufferData, byteOffset + i * stride + componentSize * 3, accessor.componentType) / maxValue : 1f;
                 }
             }
 
