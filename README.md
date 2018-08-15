@@ -20,3 +20,7 @@ Unity glTF 2.0 serialization using `UnityEditor.JsonUtility`.
 
 # Supported Extensions
 - KHR_materials_pbrSpecularGlossiness
+
+# FAQ
+
+- To load gltf or glb files at runtime without a custom shader, you'll need to make sure that the standard shader is included in your final build with each of the required variants compiled and located either in your resources folder, or used in your scene. For more information check out the [Unity Docs explaining how to access shader properties at runtime](https://docs.unity3d.com/Manual/MaterialsAccessingViaScript.html).
