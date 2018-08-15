@@ -1,5 +1,5 @@
 # glTF-Unity
-Unity glTF 2.0 serialization using `UnityEditor.JsonUtility`.
+Unity [glTF 2.0](https://github.com/KhronosGroup/glTF) serialization using `UnityEditor.JsonUtility`.
 
 - [x] Import Asset
     - [x] Import asset at runtime
