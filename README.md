@@ -35,7 +35,7 @@ GltfObject gltfObject = GltfSerializationUtility.GetGltfObjectFromJson(json);
 GltfObject gltfObject = GltfSerializationUtility.GetGltfObjectFromPath(uri);
 ```
 
-## To access build GameObject scene reference
+## To access built GameObject scene reference
 ```
 gltfObject.GameObjectReference
 ```
