@@ -10,8 +10,9 @@ Unity [glTF 2.0](https://github.com/KhronosGroup/glTF) serialization using `Unit
     - [x] Construct GameObject from GltfObject Data
     - [x] Apply texture to GameObject
     - [x] Apply PBR Settings to material
-    - [ ] Import skinned meshes
+    - [ ] Import skins
     - [ ] Import Animations
+    - [ ] Import Cameras
     - [ ] Apply extension properties to imported asset.
 - [ ] Export Asset
     - [ ] Export asset at runtime
