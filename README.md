@@ -19,7 +19,7 @@ Unity [glTF 2.0](https://github.com/KhronosGroup/glTF) serialization using `Unit
     - [ ] .glb file extension
 
 # Supported Extensions
-- KHR_materials_pbrSpecularGlossiness
+- [ ] KHR_materials_pbrSpecularGlossiness
     - [ ] Apply extension properties to imported asset.
 
 # FAQ
