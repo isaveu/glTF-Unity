@@ -22,6 +22,9 @@ namespace Gltf.Serialization
             // TODO Check if glb vs gltf
             string gltfJson = File.ReadAllText(uri);
             var gltfObject = GetGltfObjectFromJson(gltfJson);
+
+            if (gltfObject == null) { return null; }
+
             gltfObject.Uri = uri;
             int nameStart = uri.LastIndexOf("\\", StringComparison.Ordinal) + 1;
             int nameLength = uri.Length - nameStart;
@@ -52,25 +55,36 @@ namespace Gltf.Serialization
 
             for (int i = 0; i < gltfObject.extensionsRequired?.Length; i++)
             {
-                var extensionsRequired = GetGltfExtensionObjects(jsonString, gltfObject.extensionsRequired[i]);
+                //var extensionsRequired = GetGltfExtensionObjects(jsonString, gltfObject.extensionsRequired[i]);
 
-                foreach (var extensionRequired in extensionsRequired)
+                //foreach (var extensionRequired in extensionsRequired)
+                //{
+                //if (gltfObject.extensionsUsed[i].Equals("KHR_materials_pbrSpecularGlossiness"))
+                //{
+                //    for (int j = 0; j < gltfObject.materials.Length; j++)
+                //    {
+                //        if (!string.IsNullOrEmpty(gltfObject.materials[i].name) &&
+                //            gltfObject.materials[i].name == extensionRequired.Key)
+                //        {
+                //            gltfObject.materials[i].Extensions.Add(gltfObject.extensionsUsed[i], extensionRequired.Value);
+                //            var extension = JsonUtility.FromJson<KHR_Materials_PbrSpecularGlossiness>(extensionRequired.Value);
+                //            extension.ElementName = gltfObject.materials[i].name;
+                //            gltfObject.RegisteredExtensions.Add(extension);
+                //        }
+                //    }
+                //}
+                //else
                 {
-                    if (gltfObject.extensionsUsed[i].Equals("KHR_materials_pbrSpecularGlossiness"))
-                    {
-                        for (int j = 0; j < gltfObject.materials.Length; j++)
-                        {
-                            if (!string.IsNullOrEmpty(gltfObject.materials[i].name) &&
-                                gltfObject.materials[i].name == extensionRequired.Key)
-                            {
-                                gltfObject.materials[i].Extensions.Add(gltfObject.extensionsUsed[i], extensionRequired.Value);
-                                var extension = JsonUtility.FromJson<KHR_Materials_PbrSpecularGlossiness>(extensionRequired.Value);
-                                extension.ElementName = gltfObject.materials[i].name;
-                                gltfObject.RegisteredExtensions.Add(extension);
-                            }
-                        }
-                    }
+                    // TODO Remove this after KHR_materials_pbrSpecularGlossiness extension is supported
+                    Debug.LogWarning($"Unsupported Extension: {gltfObject.extensionsRequired[i]}");
                 }
+                //}
+            }
+
+            // TODO Remove this after KHR_materials_pbrSpecularGlossiness extension is supported
+            if (gltfObject.extensionsRequired?.Length > 0)
+            {
+                return null;
             }
 
             for (int i = 0; i < gltfObject.extensionsUsed?.Length; i++)
@@ -92,6 +106,10 @@ namespace Gltf.Serialization
                                 gltfObject.RegisteredExtensions.Add(extension);
                             }
                         }
+                    }
+                    else
+                    {
+                        Debug.LogWarning($"Unsupported Extension: {gltfObject.extensionsUsed[i]}");
                     }
                 }
             }
@@ -165,6 +183,7 @@ namespace Gltf.Serialization
         /// <returns>A collection of snippets with the json string that defines the object.</returns>
         private static Dictionary<string, string> GetGltfExtensionObjects(string jsonString, string handle)
         {
+            // Bug: sometimes name isn't always before extension declaration
             var regex = new Regex($"(\"name\":\\s*\"\\w*\",\\s*\"extensions\":\\s*{{\\s*?)(\"{handle}\"\\s*:\\s*{{)");
             return GetGltfExtensions(jsonString, regex);
         }
@@ -177,6 +196,7 @@ namespace Gltf.Serialization
         /// <returns>A collection of snippets with the json string that defines the object.</returns>
         public static Dictionary<string, string> GetGltfExtraObjects(string jsonString, string handle)
         {
+            // Bug: sometimes name isn't always before extra declaration
             var regex = new Regex($"(\"name\":\\s*\"\\w*\",\\s*\"extras\":\\s*{{\\s*?)(\"{handle}\"\\s*:\\s*{{)");
             return GetGltfExtensions(jsonString, regex);
         }
