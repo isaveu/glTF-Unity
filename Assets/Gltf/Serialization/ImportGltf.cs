@@ -52,22 +52,35 @@ namespace Gltf.Serialization
 
         private static void ConstructBuffer(this GltfObject gltfObject, GltfBuffer gltfBuffer)
         {
-            var parentDirectory = Directory.GetParent(gltfObject.Uri);
+            var parentDirectory = Directory.GetParent(gltfObject.Uri).FullName;
+#if UNITY_WSA
+            gltfBuffer.BufferData = UnityEngine.Windows.File.ReadAllBytes($"{parentDirectory}\\{gltfBuffer.uri}");
+#else
             gltfBuffer.BufferData = File.ReadAllBytes($"{parentDirectory}\\{gltfBuffer.uri}");
+#endif
         }
 
         private static void ConstructTexture(this GltfObject gltfObject, GltfTexture gltfTexture)
         {
-            var parentDirectory = Directory.GetParent(gltfObject.Uri);
+            var parentDirectory = Directory.GetParent(gltfObject.Uri).FullName;
 
             if (gltfTexture.source >= 0)
             {
                 GltfImage gltfImage = gltfObject.images[gltfTexture.source];
 
+                var imagePath = $"{parentDirectory}\\{gltfImage.uri}";
+
                 // TODO Check if texture is in unity project, and use the asset reference instead.
 
                 gltfImage.Texture = new Texture2D(0, 0);
-                gltfImage.Texture.LoadImage(File.ReadAllBytes($"{parentDirectory}\\{gltfImage.uri}"), false);
+
+#if UNITY_WSA
+                var imageData = UnityEngine.Windows.File.ReadAllBytes(imagePath);
+#else
+                var imageData = File.ReadAllBytes(imagePath);
+#endif
+
+                gltfImage.Texture.LoadImage(imageData, false);
             }
         }
 
@@ -152,6 +165,7 @@ namespace Gltf.Serialization
             {
                 material.SetTexture("_BumpMap", gltfObject.images[gltfMaterial.normalTexture.index].Texture);
                 material.EnableKeyword("_BumpMap");
+                material.EnableKeyword("_NORMALMAP");
             }
 
             if (gltfMaterial.emissiveTexture.index >= 0 && material.HasProperty("_EmissionMap"))

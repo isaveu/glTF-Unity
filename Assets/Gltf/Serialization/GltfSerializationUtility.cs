@@ -3,7 +3,6 @@ using Gltf.Schema.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
 using System.Text.RegularExpressions;
 using UnityEngine;
 using Debug = UnityEngine.Debug;
@@ -20,7 +19,14 @@ namespace Gltf.Serialization
         public static GltfObject GetGltfObjectFromPath(string uri)
         {
             // TODO Check if glb vs gltf
-            string gltfJson = File.ReadAllText(uri);
+
+#if UNITY_WSA
+            var data = UnityEngine.Windows.File.ReadAllBytes(uri);
+            var gltfJson = System.Text.Encoding.ASCII.GetString(data);
+#else
+            string gltfJson = System.IO.File.ReadAllText(uri);
+#endif
+
             var gltfObject = GetGltfObjectFromJson(gltfJson);
 
             if (gltfObject == null) { return null; }
