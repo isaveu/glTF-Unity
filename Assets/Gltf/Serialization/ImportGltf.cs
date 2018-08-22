@@ -168,12 +168,28 @@ namespace Gltf.Serialization
                 material.EnableKeyword("_NORMALMAP");
             }
 
-            if (gltfMaterial.emissiveTexture.index >= 0 && material.HasProperty("_EmissionMap"))
+            if (material.HasProperty("_EmissionMap") && material.HasProperty("_EMISSION"))
             {
-                material.SetTexture("_EmissionMap", gltfObject.images[gltfMaterial.emissiveTexture.index].Texture);
-                material.SetColor("_EmissionColor", gltfMaterial.emissiveFactor.GetColorValue());
-                material.EnableKeyword("_EmissionMap");
-                material.EnableKeyword("_EMISSION");
+                var enable = false;
+                if (gltfMaterial.emissiveTexture.index >= 0)
+                {
+                    material.SetTexture("_EmissionMap", gltfObject.images[gltfMaterial.emissiveTexture.index].Texture);
+                    material.EnableKeyword("_EmissionMap");
+                    enable = true;
+                }
+
+                var emissiveColor = gltfMaterial.emissiveFactor.GetColorValue();
+
+                if (gltfMaterial.emissiveFactor != null && emissiveColor != Color.black)
+                {
+                    material.SetColor("_EmissionColor", emissiveColor);
+                    enable = true;
+                }
+
+                if (enable)
+                {
+                    material.EnableKeyword("_EMISSION");
+                }
             }
 
             gltfMaterial.Material = material;
@@ -194,25 +210,25 @@ namespace Gltf.Serialization
             // If we're creating a really large node, we need it to not be visible in partial stages. So we hide it while we create it
             nodeGameObject.SetActive(false);
 
-            Vector3 position = Vector3.zero;
-            Quaternion rotation = Quaternion.identity;
-            Vector3 scale = Vector3.one;
+            Vector3 position;
+            Quaternion rotation;
+            Vector3 scale;
 
             node.Matrix = node.GetTrsProperties(out position, out rotation, out scale);
 
             if (node.Matrix == Matrix4x4.identity)
             {
-                if (node.translation != null)
+                if (node.translation != null && node.translation.Length == 3)
                 {
                     position = node.translation.GetVector3Value();
                 }
 
-                if (node.rotation != null)
+                if (node.rotation != null && node.rotation.Length == 4)
                 {
                     rotation = node.rotation.GetQuaternionValue();
                 }
 
-                if (node.scale != null)
+                if (node.scale != null && node.scale.Length == 3)
                 {
                     scale = node.scale.GetVector3Value(false);
                 }
@@ -372,6 +388,8 @@ namespace Gltf.Serialization
 
         private static BoneWeight[] CreateBoneWeightArray(Vector4[] joints, Vector4[] weights, int vertexCount)
         {
+            if (joints == null || weights == null) { return null; }
+
             NormalizeBoneWeightArray(weights);
 
             var boneWeights = new BoneWeight[vertexCount];

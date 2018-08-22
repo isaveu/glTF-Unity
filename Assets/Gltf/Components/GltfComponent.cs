@@ -13,8 +13,16 @@ namespace Gltf.Components
 
         private void Awake()
         {
-            GltfObject gltfObject = GltfSerializationUtility.GetGltfObjectFromPath(uri);
-            Debug.Assert(gltfObject != null);
+            GltfObject gltfObject = GltfSerializationUtility.GetGltfObjectFromPath(Application.streamingAssetsPath + "/" + uri);
+
+            if (gltfObject == null)
+            {
+                Debug.LogError("Failed to load gltf object");
+            }
+            else
+            {
+                Debug.Log("Import successful");
+            }
         }
     }
 }

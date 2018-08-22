@@ -51,7 +51,7 @@ namespace Gltf.Schema
         /// <minItems>3</minItems>
         /// <maxItems>3</maxItems>
         /// </summary>
-        public float[] emissiveFactor = { 0f, 0f, 0f, 0f };
+        public float[] emissiveFactor = { 0f, 0f, 0f, 1f };
 
         /// <summary>
         /// The material's alpha rendering mode enumeration specifying the interpretation of the

@@ -15,7 +15,12 @@ namespace Gltf.Serialization
 
         public static Matrix4x4 GetTrsProperties(this GltfNode node, out Vector3 position, out Quaternion rotation, out Vector3 scale)
         {
-            Matrix4x4 matrix = node.matrix.GetMatrix4X4Value();
+            Matrix4x4 matrix = Matrix4x4.identity;
+
+            if (node.matrix != null && node.matrix.Length == 16)
+            {
+                matrix = node.matrix.GetMatrix4X4Value();
+            }
 
             if (!node.useTRS)
             {
