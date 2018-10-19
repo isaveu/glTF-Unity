@@ -36,6 +36,11 @@ GltfObject gltfObject = GltfSerializationUtility.GetGltfObjectFromJson(json);
 GltfObject gltfObject = GltfSerializationUtility.GetGltfObjectFromPath(uri);
 ```
 
+## To Import GlFT-Object:
+```
+await ImportGltf.ImportGltfObjectAsync(gltfObject);
+```
+
 ## To access built Gltf GameObject scene reference
 ```
 gltfObject.GameObjectReference
