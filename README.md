@@ -1,3 +1,8 @@
+# Attention
+
+All work has stopped in this repository and the newest fixes/additions can be found at
+https://github.com/XRTK/XRTK-Core/tree/master/XRTK-Core/Assets/XRTK/Utilities/Gltf
+
 # glTF-Unity
 Unity [glTF 2.0](https://github.com/KhronosGroup/glTF) serialization using `UnityEditor.JsonUtility`.
 
